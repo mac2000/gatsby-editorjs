@@ -21,6 +21,10 @@
     "upgrade": "npm run outdated -- -u"
   },
   "dependencies": {
+    "@editorjs/editorjs": "^2.30.6",
+    "@editorjs/header": "^2.8.7",
+    "@editorjs/list": "^1.10.0",
+    "@editorjs/paragraph": "^2.11.6",
     "autoprefixer": "^10.4.20",
     "gatsby": "^5.13.7",
     "gatsby-plugin-postcss": "^6.13.1",
