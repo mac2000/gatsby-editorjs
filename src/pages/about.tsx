@@ -6,15 +6,15 @@ import head from '../components/head'
 export default function () {
   return (
     <Layout>
-      <h1 className="text-xl my-5">Home</h1>
+      <h1 className="text-xl my-5">About</h1>
       <p>
-        <span>home</span>
-        <Link to="/about" className="text-blue-500">
-          about
+        <Link to="/" className="text-blue-500">
+          home
         </Link>
+        <span>about</span>
       </p>
     </Layout>
   )
 }
 
-export const Head = () => head({ title: 'Home' })
+export const Head = () => head({ title: 'About' })
