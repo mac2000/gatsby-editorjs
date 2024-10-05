@@ -1,5 +1,38 @@
 import * as React from 'react'
+import { Link, StaticQuery, graphql, type PageProps } from 'gatsby'
 
-export default function ({ children }: { children: React.ReactNode }) {
-  return <main>{children}</main>
+export default function PostPage({ children }: { children: React.ReactNode }) {
+  return (
+    <StaticQuery
+      query={query}
+      render={(data: Queries.AllSitePagePathsQuery) => (
+        <main>
+          <ul className="flex gap-3 mb-5">
+            <span>paths:</span>
+            {data.allSitePage.nodes
+              .map((n) => n.path)
+              .filter((p) => !p.includes('404'))
+              .map((p) => (
+                <li key={p}>
+                  <Link to={p} className="text-blue-500">
+                    {p}
+                  </Link>
+                </li>
+              ))}
+          </ul>
+          {children}
+        </main>
+      )}
+    />
+  )
 }
+
+export const query = graphql`
+  query AllSitePagePaths {
+    allSitePage {
+      nodes {
+        path
+      }
+    }
+  }
+`

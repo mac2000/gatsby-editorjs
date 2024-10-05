@@ -10,11 +10,6 @@ import { Link } from 'gatsby'
 export default function ({ pageContext: { blocks } }: { pageContext: OutputData }) {
   return (
     <Layout>
-      <p>
-        <Link to="/" className="text-blue-500">
-          home
-        </Link>
-      </p>
       <Blocks blocks={blocks} />
     </Layout>
   )
