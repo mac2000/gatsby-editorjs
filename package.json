@@ -15,7 +15,10 @@
     "build": "gatsby build",
     "serve": "gatsby serve",
     "clean": "gatsby clean",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "format": "npx prettier --write .",
+    "outdated": "npx npm-check-updates",
+    "upgrade": "npm run outdated -- -u"
   },
   "dependencies": {
     "autoprefixer": "^10.4.20",
