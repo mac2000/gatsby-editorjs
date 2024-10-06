@@ -10,10 +10,9 @@ export default function ({ pageContext: { blocks } }: { pageContext: OutputData 
     <main>
       <Blocks blocks={blocks} />
       {typeof window !== 'undefined' && (
-        <div className="mt-5">
-          <Link to={`/edit/?path=${window.location.pathname}`} className="text-blue-500">
-            edit this page
-          </Link>
+        <div>
+          <hr />
+          <Link to={`/edit/?path=${window.location.pathname}`}>edit this page</Link>
         </div>
       )}
     </main>

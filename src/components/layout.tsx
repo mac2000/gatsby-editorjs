@@ -6,22 +6,33 @@ export default function PostPage({ children }: { children: React.ReactNode }) {
     <StaticQuery
       query={query}
       render={(data: Queries.AllSitePagePathsQuery) => (
-        <main>
-          <ul className="flex gap-3 mb-5">
-            <li>paths:</li>
-            {data.allSitePage.nodes
-              .map((n) => n.path)
-              .filter((p) => !p.includes('404') && p !== '/edit/')
-              .map((p) => (
-                <li key={p}>
-                  <Link to={p} className="text-blue-500">
-                    {p}
-                  </Link>
-                </li>
-              ))}
-          </ul>
-          {children}
-        </main>
+        <table width="100%">
+          <tbody>
+            <tr>
+              <td valign="top">
+                <fieldset>
+                  <legend>page</legend>
+                  {children}
+                </fieldset>
+              </td>
+              <td valign="top" width="30%">
+                <fieldset>
+                  <legend>paths</legend>
+                  <ul>
+                    {data.allSitePage.nodes
+                      .map((n) => n.path)
+                      .filter((p) => !p.includes('404') && p !== '/edit/')
+                      .map((p) => (
+                        <li key={p}>
+                          <Link to={p}>{p}</Link>
+                        </li>
+                      ))}
+                  </ul>
+                </fieldset>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       )}
     />
   )

@@ -115,7 +115,8 @@ export default function () {
 
   return (
     <main>
-      <h1 className="text-xl my-5">Edit</h1>
+      <div ref={ref} />
+      <hr />
       <p>
         token:{' '}
         <input
@@ -127,19 +128,12 @@ export default function () {
           }}
         />{' '}
         todo: github oauth app
-        <button className="bg-lime-500 text-white px-2 px-1" onClick={login}>
-          login
-        </button>
+        <button onClick={login}>login</button>
       </p>
       <p>path: {path}</p>
       <p>
-        <button className="bg-indigo-500 text-white px-2 py-1" onClick={save}>
-          save
-        </button>
+        <button onClick={save}>save</button>
       </p>
-      <div className="my-5">
-        <div ref={ref} />
-      </div>
     </main>
   )
 }
