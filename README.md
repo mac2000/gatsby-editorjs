@@ -1,49 +1,177 @@
-<p align="center">
-  <a href="https://www.gatsbyjs.com/?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter-ts">
-    <img alt="Gatsby" src="https://www.gatsbyjs.com/Gatsby-Monogram.svg" width="60" />
-  </a>
-</p>
-<h1 align="center">
-  Gatsby Minimal TypeScript Starter
-</h1>
+# gatsby ❤️ editorjs
 
-## 🚀 Quick start
+## How it works
 
-1.  **Create a Gatsby site.**
+We have simple getting started gatsby website that utilizes github pages
 
-    Use the Gatsby CLI to create a new site, specifying the minimal TypeScript starter.
+At the begining only pages from `src/pages/whatever.tsx` are available on web site
 
-    ```shell
-    # create a new Gatsby site using the minimal TypeScript starter
-    npm init gatsby -- -ts
-    ```
+The idea is to use `src/pages/whatever.json` instead, where JSON is an output from editor.js
 
-2.  **Start developing.**
+To do so, we need (pseudo)
 
-    Navigate into your new site’s directory and start it up.
+**gatsby-node.ts**
 
-    ```shell
-    cd my-gatsby-site/
-    npm run develop
-    ```
+```ts
+import { GatsbyNode } from 'gatsby'
 
-3.  **Open the code and start customizing!**
+export const createPages: GatsbyNode['createPages'] = async ({ actions }) => {
+  const component = resolve('./src/components/page.tsx')
+  const pages = recursivelyGetContentsOfEditorJsJsonFilesUnderSrc()
+  for (const [path, context] of Object.entries(pages)) {
+    actions.createPage({ path, component, context })
+  }
+}
 
-    Your site is now running at http://localhost:8000!
+function recursivelyGetContentsOfEditorJsJsonFilesUnderSrc() {
+  const items: Record<string, OutputData> = {} // using path as key and json content as value
+  for (const path of readdirSync(resolve('./src/pages'), { recursive: true })) {
+    // TODO: perform checks to filter unwanted files
+    items[path.replace(/\.json$/, '')] = JSON.parse(readFileSync(path, 'utf-8'))
+  }
+  return items
+}
+```
 
-    Edit `src/pages/index.tsx` to see your site update in real-time!
+and suddenly all our json files become web site pages 🔥
 
-4.  **Learn more**
+now the trick is to render them
 
-    - [Documentation](https://www.gatsbyjs.com/docs/?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter-ts)
-    - [Tutorials](https://www.gatsbyjs.com/docs/tutorial/?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter-ts)
-    - [Guides](https://www.gatsbyjs.com/docs/how-to/?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter-ts)
-    - [API Reference](https://www.gatsbyjs.com/docs/api-reference/?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter-ts)
-    - [Plugin Library](https://www.gatsbyjs.com/plugins?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter-ts)
-    - [Cheat Sheet](https://www.gatsbyjs.com/docs/cheat-sheet/?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter-ts)
+**src/components/page.tsx**
 
-## 🚀 Quick start (Netlify)
+```tsx
+import * as React from 'react'
+import { OutputData } from '@editorjs/editorjs'
 
-Deploy this starter with one click on [Netlify](https://app.netlify.com/signup):
+export default function ({ pageContext: { blocks } }: { pageContext: OutputData }) {
+  return <pre>{JSON.stringify(blocks, null, 2)}</pre>
+}
+```
 
-[<img src="https://www.netlify.com/img/deploy/button.svg" alt="Deploy to Netlify" />](https://app.netlify.com/start/deploy?repository=https://github.com/gatsbyjs/gatsby-starter-minimal-ts)
+So, technically it works the same way as with markdown files, except file format
+
+Now the fun part **editor.js**
+
+On every page we added an link to edit url, this url will:
+
+- github auth
+- fetch json right from github repository
+- render editor.js
+- on save - just commit data back to github
+
+> Note: there are few gatsby related workarounds to make it work - editor.js can not be part of gatsby build and broke everythings, that's why we did an workaround with suspense and lazy
+
+**src/pages/edit.tsx**
+
+```tsx
+export default function () {
+  const ref = useRef<HTMLDivElement>(null)
+  const [token, setToken] = useState<string>(typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('token') || '' : '')
+  const path = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('path')?.replace(/^\//, 'src/pages/')?.replace(/\/$/, '.json') : ''
+  const [sha, setSha] = useState<string>()
+  const [data, setData] = useState<OutputData | undefined>()
+  const [editor, setEditor] = useState<EditorJS | undefined>()
+
+  // on page load - retrieve json from github
+  useEffect(() => {
+    if (!path || !token || typeof window === 'undefined') {
+      return
+    }
+    fetch(`https://api.github.com/repos/mac2000/gatsby-editorjs/contents/${path}`, { headers: { authorization: `Bearer ${token}` } })
+      .then((r) => r.json())
+      .then(({ content, sha }) => {
+        setSha(sha)
+        return atob(content).toString()
+      })
+      .then((content) => JSON.parse(content))
+      .then(setData)
+  }, [])
+
+  // create an editor.js instance for retrieved data
+  useEffect(() => {
+    if (!ref.current || !data || typeof window === 'undefined') {
+      return
+    }
+
+    const editor = new EditorJS({
+      holder: ref.current,
+      data: data,
+      // ...
+    })
+    setEditor(editor)
+
+    return () => {
+      setEditor(undefined)
+      editor.destroy()
+    }
+  }, [ref, data])
+
+  // on save - just commit changes back to github
+  const save = () => {
+    if (!editor) {
+      return
+    }
+    editor.save().then((data) => {
+      const content = JSON.stringify(data, null, 2)
+      fetch(`https://api.github.com/repos/mac2000/gatsby-editorjs/contents/${path}`, {
+        method: 'PUT',
+        headers: {
+          authorization: `Bearer ${token}`,
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: 'edit',
+          content: btoa(content),
+          sha: sha,
+        }),
+      }).then((r) => {
+        if (r.status === 200) {
+          alert('changes saved, navigate to github actions to see build and deploy progress')
+        } else {
+          r.text().then(alert)
+        }
+      })
+    })
+  }
+
+  // unfortunately: neither device flow nor usual flow allows us to do it without server, as a workaround - use token input
+  const login = () => {
+    alert('not implemented, requires backend')
+    // fetch('https://github.com/login/device/code', {
+    //   method: 'POST',
+    //   headers: { 'content-type': 'application/json' },
+    //   body: JSON.stringify({ client_id, scope: 'user repo' }),
+    // })
+    //   .then((r) => r.json())
+    //   .then(({ device_code, user_code, verification_uri, expires_in, interval }) => {
+    //     console.log({ device_code, user_code, verification_uri, expires_in, interval })
+    //   })
+  }
+
+  return (
+    <main>
+      <div ref={ref} />
+      <hr />
+      <p>
+        token:{' '}
+        <input
+          type="password"
+          value={token}
+          onChange={(e) => {
+            setToken(e.target.value)
+            sessionStorage.setItem('token', e.target.value)
+          }}
+        />{' '}
+        todo: github oauth app
+        <button onClick={login}>login</button>
+      </p>
+      <p>path: {path}</p>
+      <p>
+        <button onClick={save}>save</button>
+      </p>
+    </main>
+  )
+}
+
+export const Head = () => <title>Edit</title>
+```
