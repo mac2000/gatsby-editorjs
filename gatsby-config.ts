@@ -6,7 +6,7 @@ const config: GatsbyConfig = {
     siteUrl: `https://gatsby-editorjs.mac-blog.org.ua/`,
   },
   graphqlTypegen: true,
-  plugins: ['gatsby-plugin-postcss'],
+  plugins: [],
 }
 
 export default config
