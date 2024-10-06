@@ -1,6 +1,4 @@
 import * as React from 'react'
-import type { HeadFC } from 'gatsby'
-import head from '../components/head'
 
 export default function () {
   return (
@@ -10,4 +8,4 @@ export default function () {
   )
 }
 
-export const Head = () => head({ title: 'Not found' })
+export const Head = () => <title>Not found</title>

@@ -1,6 +1,4 @@
 import * as React from 'react'
-import Layout from '../components/layout'
-import head from '../components/head'
 import { OutputBlockData, OutputData } from '@editorjs/editorjs'
 import { ParagraphData } from '@editorjs/paragraph'
 import { HeaderData } from '@editorjs/header'
@@ -9,7 +7,7 @@ import { Link } from 'gatsby'
 
 export default function ({ pageContext: { blocks } }: { pageContext: OutputData }) {
   return (
-    <Layout>
+    <main>
       <Blocks blocks={blocks} />
       {typeof window !== 'undefined' && (
         <div className="mt-5">
@@ -18,7 +16,7 @@ export default function ({ pageContext: { blocks } }: { pageContext: OutputData 
           </Link>
         </div>
       )}
-    </Layout>
+    </main>
   )
 }
 
@@ -31,13 +29,13 @@ export function Blocks({ blocks }: { blocks: OutputBlockData[] }) {
         return <h2 key={block.id!}>{(block.data as HeaderData).text}</h2>
       case 'list':
         return (block.data as ListData).style === 'ordered' ? (
-          <ol>
+          <ol key={block.id}>
             {(block.data as ListData).items.map((item, index) => (
               <li key={index} dangerouslySetInnerHTML={{ __html: item }} />
             ))}
           </ol>
         ) : (
-          <ul>
+          <ul key={block.id}>
             {(block.data as ListData).items.map((item, index) => (
               <li key={index} dangerouslySetInnerHTML={{ __html: item }} />
             ))}
@@ -67,4 +65,4 @@ export function Blocks({ blocks }: { blocks: OutputBlockData[] }) {
   })
 }
 
-export const Head = () => head({ title: 'About' })
+export const Head = () => <title>page</title>

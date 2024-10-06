@@ -1,8 +1,6 @@
 import * as React from 'react'
-import Layout from '../components/layout'
-import head from '../components/head'
 import { useState, useEffect, useRef } from 'react'
-import EditorJS, { LogLevels, OutputData } from '@editorjs/editorjs'
+import EditorJS, { OutputData } from '@editorjs/editorjs'
 import Paragraph from '@editorjs/paragraph'
 import Header from '@editorjs/header'
 import List from '@editorjs/list'
@@ -112,7 +110,7 @@ export default function () {
   }
 
   return (
-    <Layout>
+    <main>
       <h1 className="text-xl my-5">Edit</h1>
       <p>
         token:{' '}
@@ -138,8 +136,12 @@ export default function () {
       <div className="my-5">
         <div ref={ref} />
       </div>
-    </Layout>
+    </main>
   )
 }
 
-export const Head = () => head({ title: 'Edit' })
+export const Head = () => <title>Edit</title>
+
+export async function config() {
+  return () => ({ defer: true })
+}

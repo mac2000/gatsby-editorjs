@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Link, StaticQuery, graphql, type PageProps } from 'gatsby'
+import { Link, StaticQuery, graphql } from 'gatsby'
 
 export default function PostPage({ children }: { children: React.ReactNode }) {
   return (
