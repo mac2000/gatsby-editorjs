@@ -8,10 +8,10 @@ export default function PostPage({ children }: { children: React.ReactNode }) {
       render={(data: Queries.AllSitePagePathsQuery) => (
         <main>
           <ul className="flex gap-3 mb-5">
-            <span>paths:</span>
+            <li>paths:</li>
             {data.allSitePage.nodes
               .map((n) => n.path)
-              .filter((p) => !p.includes('404'))
+              .filter((p) => !p.includes('404') && p !== '/edit/')
               .map((p) => (
                 <li key={p}>
                   <Link to={p} className="text-blue-500">
