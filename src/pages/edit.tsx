@@ -34,7 +34,7 @@ export default function () {
   }, [])
 
   useEffect(() => {
-    if (!ref.current || !data) {
+    if (!ref.current || !data || typeof window === 'undefined') {
       return
     }
 
