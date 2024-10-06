@@ -11,11 +11,13 @@ export default function ({ pageContext: { blocks } }: { pageContext: OutputData 
   return (
     <Layout>
       <Blocks blocks={blocks} />
-      <div className="mt-5">
-        <Link to={`/edit/?path=${window.location.pathname}`} className="text-blue-500">
-          edit this page
-        </Link>
-      </div>
+      {typeof window !== 'undefined' && (
+        <div className="mt-5">
+          <Link to={`/edit/?path=${window.location.pathname}`} className="text-blue-500">
+            edit this page
+          </Link>
+        </div>
+      )}
     </Layout>
   )
 }

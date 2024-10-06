@@ -13,6 +13,8 @@ import Table from '@editorjs/table'
 import CodeTool from '@editorjs/code'
 import InlineCode from '@editorjs/inline-code'
 
+const client_id = 'Ov23li1ABZla2FQD1FmZ'
+
 export default function () {
   const ref = useRef<HTMLDivElement>(null)
   const [token, setToken] = useState<string>(sessionStorage.getItem('token') || '')
@@ -96,6 +98,19 @@ export default function () {
     })
   }
 
+  const login = () => {
+    alert('not implemented, requires backend')
+    // fetch('https://github.com/login/device/code', {
+    //   method: 'POST',
+    //   headers: { 'content-type': 'application/json' },
+    //   body: JSON.stringify({ client_id, scope: 'user repo' }),
+    // })
+    //   .then((r) => r.json())
+    //   .then(({ device_code, user_code, verification_uri, expires_in, interval }) => {
+    //     console.log({ device_code, user_code, verification_uri, expires_in, interval })
+    //   })
+  }
+
   return (
     <Layout>
       <h1 className="text-xl my-5">Edit</h1>
@@ -110,6 +125,9 @@ export default function () {
           }}
         />{' '}
         todo: github oauth app
+        <button className="bg-lime-500 text-white px-2 px-1" onClick={login}>
+          login
+        </button>
       </p>
       <p>path: {path}</p>
       <p>
