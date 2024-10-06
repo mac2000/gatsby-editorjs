@@ -175,3 +175,9 @@ export default function () {
 
 export const Head = () => <title>Edit</title>
 ```
+
+## TODO
+
+- **graphql:** theoretically it should be possible to integrate editor.js output data into graph typing, so it will enforce us to be specific on what we are retrieving
+- **oauth:** without auth makes no sense, because we still need server or at least some lambda, but if we have it we may use full power and something like next.js instead
+- **workflows:** crazy idea which will work but does not wors it - we may trigger an workflow in our repo, watch it to complete, and insde perform device flow auth
