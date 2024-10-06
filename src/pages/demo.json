@@ -1,5 +1,5 @@
 {
-  "time": 1728198448401,
+  "time": 1728199232075,
   "blocks": [
     {
       "id": "SjeFcC9bPL",
@@ -14,23 +14,6 @@
       "type": "paragraph",
       "data": {
         "text": "Hello"
-      }
-    },
-    {
-      "id": "SGm2_tE8gR",
-      "type": "table",
-      "data": {
-        "withHeadings": true,
-        "content": [
-          [
-            "<b>key</b>",
-            "<b>value</b>"
-          ],
-          [
-            "one",
-            "1"
-          ]
-        ]
       }
     },
     {
